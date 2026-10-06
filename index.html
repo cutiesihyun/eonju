@@ -1,219 +1,628 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>오늘 먹을 점심 메뉴 추천 ☀️</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap" rel="stylesheet">
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>수행메이트 - 우리 반 자동 공지 달력</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-hover: #1557b0;
+      --primary-light: #e8f0fe;
+      --surface: #ffffff;
+      --background: #f8f9fa;
+      --text-main: #202124;
+      --text-sub: #5f6368;
+      --border: #dadce0;
+      --high-priority: #ea4335;
+      --mid-priority: #fbbc04;
+      --low-priority: #34a853;
+      --radius: 8px;
+    }
 
-        body {
-            font-family: 'Gowun Dodum', sans-serif;
-            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 50%, #ffcc80 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans KR', 'Roboto', sans-serif;
+      background-color: var(--background);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
 
-        .container {
-            background-color: rgba(255, 255, 255, 0.96);
-            padding: 40px 30px;
-            border-radius: 24px;
-            box-shadow: 0 15px 35px rgba(230, 81, 0, 0.15);
-            text-align: center;
-            max-width: 480px;
-            width: 100%;
-            transition: transform 0.3s ease;
-        }
+    /* Top Navigation Header */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      height: 64px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 2px rgba(60,64,67,0.05);
+    }
 
-        h1 {
-            font-family: 'Jua', sans-serif;
-            font-size: 2.3rem;
-            color: #e65100;
-            margin-bottom: 10px;
-            word-break: keep-all;
-        }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-        .subtitle {
-            color: #6d4c41;
-            font-size: 1rem;
-            margin-bottom: 30px;
-        }
+    .logo-icon {
+      color: var(--primary);
+      font-size: 28px;
+    }
 
-        .result-card {
-            background: #fffde7;
-            border: 2px dashed #ffe082;
-            border-radius: 18px;
-            padding: 30px 20px;
-            margin-bottom: 30px;
-            min-height: 230px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
+    .logo-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #3c4043;
+    }
 
-        .emoji {
-            font-size: 5rem;
-            margin-bottom: 15px;
-            display: inline-block;
-            transition: transform 0.2s ease;
-        }
+    .class-selector-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--background);
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
 
-        .menu-name {
-            font-family: 'Jua', sans-serif;
-            font-size: 1.8rem;
-            color: #3e2723;
-        }
+    select.class-select {
+      background: transparent;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-main);
+      outline: none;
+      cursor: pointer;
+    }
 
-        .recommend-btn {
-            font-family: 'Jua', sans-serif;
-            font-size: 1.4rem;
-            background: linear-gradient(45deg, #ff9800, #f57c00);
-            color: white;
-            border: none;
-            padding: 16px 36px;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(245, 124, 0, 0.35);
-            transition: all 0.2s ease;
-            outline: none;
-        }
+    .user-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-        .recommend-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 25px rgba(245, 124, 0, 0.45);
-            background: linear-gradient(45deg, #fb8c00, #ef6c00);
-        }
+    .btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
 
-        .recommend-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 5px 10px rgba(245, 124, 0, 0.3);
-        }
+    .btn:hover {
+      background: #f1f3f4;
+    }
 
-        .category-tag {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 4px 12px;
-            background-color: #ffe0b2;
-            color: #e65100;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+    }
 
-        /* 애니메이션 효과 */
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
 
-        .bounce {
-            animation: bounce 0.5s ease infinite;
-        }
+    .btn-admin {
+      background: #fef7e0;
+      border-color: #fbbc04;
+      color: #b06000;
+    }
 
-        @keyframes pop {
-            0% { transform: scale(0.5); opacity: 0; }
-            80% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
-        }
+    /* Main Content Layout */
+    .app-container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
 
-        .pop-in {
-            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-    </style>
+    /* Calendar Section */
+    .calendar-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+      padding: 16px 24px;
+      overflow-y: auto;
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .month-control {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .month-title {
+      font-size: 20px;
+      font-weight: 700;
+      min-width: 140px;
+      text-align: center;
+    }
+
+    .grid-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .grid-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-auto-rows: minmax(100px, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-top: none;
+      flex: 1;
+    }
+
+    .day-cell {
+      background: var(--surface);
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 110px;
+    }
+
+    .day-cell.other-month {
+      background: #fafafa;
+      color: #dadce0;
+    }
+
+    .day-number {
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+
+    .day-cell.today .day-number {
+      background: var(--primary);
+      color: white;
+    }
+
+    .task-badge {
+      font-size: 11px;
+      padding: 4px 6px;
+      border-radius: 4px;
+      margin-bottom: 4px;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .badge-high { background: var(--high-priority); }
+    .badge-mid { background: #e37400; }
+    .badge-low { background: var(--low-priority); }
+
+    /* Right Sidebar - Notice List */
+    .sidebar {
+      width: 340px;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      gap: 16px;
+    }
+
+    .sidebar-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .notice-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: var(--surface);
+    }
+
+    .notice-card.d-day {
+      border-left: 4px solid var(--high-priority);
+      background: #fce8e6;
+    }
+
+    .notice-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .d-tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+      background: var(--text-main);
+      color: white;
+    }
+
+    .d-day .d-tag { background: var(--high-priority); }
+
+    .notice-subject {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .notice-desc {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .notice-info {
+      font-size: 11px;
+      color: #3c4043;
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      outline: none;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>오늘 점심 뭐 먹지? ☀️</h1>
-        <p class="subtitle">오늘 점심 고민 끝! 버튼을 눌러 점심 메뉴를 추천받아보세요.</p>
-
-        <div class="result-card">
-            <div id="emoji" class="emoji">🍱</div>
-            <div id="menu" class="menu-name">버튼을 눌러주세요</div>
-            <div id="category" class="category-tag" style="display: none;"></div>
-        </div>
-
-        <button class="recommend-btn" onclick="recommendMenu()">점심 메뉴 추천 🎲</button>
+  <!-- Header -->
+  <header>
+    <div class="logo-area">
+      <span class="material-icons-outlined logo-icon">event_available</span>
+      <span class="logo-title">수행메이트</span>
     </div>
 
-    <script>
-        const menuList = [
-            { name: "김치찌개", emoji: "🍲", category: "한식" },
-            { name: "된장찌개", emoji: "🍲", category: "한식" },
-            { name: "제육볶음", emoji: "🥩", category: "한식" },
-            { name: "비빔밥", emoji: "🥗", category: "한식" },
-            { name: "돈가스", emoji: "🍱", category: "일식/경양식" },
-            { name: "자장면", emoji: "🍜", category: "중식" },
-            { name: "짬뽕", emoji: "🍜", category: "중식" },
-            { name: "볶음밥", emoji: "🍛", category: "중식" },
-            { name: "초밥", emoji: "🍣", category: "일식" },
-            { name: "라멘", emoji: "🍜", category: "일식" },
-            { name: "우동", emoji: "🍲", category: "일식" },
-            { name: "파스타", emoji: "🍝", category: "양식" },
-            { name: "햄버거", emoji: "🍔", category: "패스트푸드" },
-            { name: "샌드위치", emoji: "🥪", category: "가벼운 식사" },
-            { name: "떡볶이", emoji: "🥘", category: "분식" },
-            { name: "김밥 & 라면", emoji: "🍙", category: "분식" },
-            { name: "쌀국수", emoji: "🍜", category: "아시안" },
-            { name: "마라탕", emoji: "🍲", category: "중식" },
-            { name: "카레라이스", emoji: "🍛", category: "아시안" },
-            { name: "순대국밥", emoji: "🍲", category: "한식" },
-            { name: "부대찌개", emoji: "🥘", category: "한식" },
-            { name: "포케/샐러드", emoji: "🥗", category: "가벼운 식사" }
-        ];
+    <div class="class-selector-area">
+      <span class="material-icons-outlined" style="font-size: 18px; color: var(--text-sub);">school</span>
+      <select id="classSelect" class="class-select" onchange="loadClassData()">
+        <option value="2-3">2학년 3반 (자동연동)</option>
+        <option value="2-1">2학년 1반 (자동연동)</option>
+      </select>
+    </div>
 
-        let isRecommending = false;
+    <div class="user-actions">
+      <button class="btn btn-admin" onclick="toggleAdminMode()">
+        <span class="material-icons-outlined" style="font-size: 16px;">admin_panel_settings</span>
+        <span id="adminBtnText">반장/선생님 모드</span>
+      </button>
+      <button class="btn btn-primary" id="addBtn" style="display:none;" onclick="openAddModal()">+ 공지 등록</button>
+    </div>
+  </header>
 
-        function recommendMenu() {
-            if (isRecommending) return;
-            isRecommending = true;
+  <!-- Main Container -->
+  <div class="app-container">
+    <!-- Calendar View -->
+    <div class="calendar-container">
+      <div class="calendar-header">
+        <div class="month-control">
+          <button class="btn" onclick="moveMonth(-1)"><span class="material-icons-outlined">chevron_left</span></button>
+          <div class="month-title" id="monthTitle">2026년 10월</div>
+          <button class="btn" onclick="moveMonth(1)"><span class="material-icons-outlined">chevron_right</span></button>
+        </div>
+        <button class="btn" onclick="goToday()">오늘</button>
+      </div>
 
-            const emojiEl = document.getElementById("emoji");
-            const menuEl = document.getElementById("menu");
-            const categoryEl = document.getElementById("category");
+      <div class="grid-weekdays">
+        <div style="color:red;">일</div>
+        <div>월</div>
+        <div>화</div>
+        <div>수</div>
+        <div>목</div>
+        <div>금</div>
+        <div style="color:blue;">토</div>
+      </div>
 
-            // 애니메이션 및 대기 효과
-            emojiEl.classList.remove("pop-in");
-            emojiEl.classList.add("bounce");
-            menuEl.innerText = "추천 중...";
-            categoryEl.style.display = "none";
+      <div class="grid-days" id="calendarDays"></div>
+    </div>
 
-            // 슬롯머신처럼 이모지가 빠르게 바뀌는 효과
-            const interval = setInterval(() => {
-                const randomTemp = menuList[Math.floor(Math.random() * menuList.length)];
-                emojiEl.innerText = randomTemp.emoji;
-            }, 80);
+    <!-- Right Sidebar Notice Timeline -->
+    <div class="sidebar">
+      <div class="sidebar-title">
+        <span class="material-icons-outlined" style="color: var(--primary);">notifications_active</span>
+        자동 공지 타임라인
+      </div>
+      <div id="sidebarList" style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto;"></div>
+    </div>
+  </div>
 
-            // 1.2초 후 최종 메뉴 확정
-            setTimeout(() => {
-                clearInterval(interval);
-                emojiEl.classList.remove("bounce");
+  <!-- Add Notice Modal (Admin Only) -->
+  <div class="modal-overlay" id="addModal">
+    <div class="modal-content">
+      <h3>새 수행평가 공지하기</h3>
+      <div class="form-group">
+        <label>과목명</label>
+        <input type="text" id="inputSubject" placeholder="예: 국어, 수학, 영어">
+      </div>
+      <div class="form-group">
+        <label>수행평가 주제 및 내용</label>
+        <textarea id="inputDesc" rows="3" placeholder="예: 독서 감상문 발표 자료 제출"></textarea>
+      </div>
+      <div class="form-group">
+        <label>제출 / 평가 날짜</label>
+        <input type="date" id="inputDate">
+      </div>
+      <div class="form-group">
+        <label>중요도</label>
+        <select id="inputPriority">
+          <option value="high">높음 (지필고사 반영 비율 높음)</option>
+          <option value="mid" selected>중간 (보통)</option>
+          <option value="low">낮음 (단원평가/체크형)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>권장 준비 시간 (분 단위)</label>
+        <input type="number" id="inputTime" value="60">
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeAddModal()">취소</button>
+        <button class="btn btn-primary" onclick="saveNotice()">학급에 공지하기</button>
+      </div>
+    </div>
+  </div>
 
-                const randomIndex = Math.floor(Math.random() * menuList.length);
-                const selected = menuList[randomIndex];
+  <script>
+    // Server Mock Database by Class
+    const classDatabase = {
+      '2-3': [
+        { id: 1, subject: '수학', desc: '이차함수 활용 모둠 문제풀이 제출', date: '2026-10-08', priority: 'high', time: 90 },
+        { id: 2, subject: '영어', desc: '영작 피포스트 발표 준비', date: '2026-10-12', priority: 'mid', time: 45 },
+        { id: 3, subject: '과학', desc: '물리 실험보고서 작성 및 제출', date: '2026-10-20', priority: 'high', time: 120 }
+      ],
+      '2-1': [
+        { id: 4, subject: '국어', desc: '현대시 분석 에세이 작성', date: '2026-10-09', priority: 'high', time: 60 },
+        { id: 5, subject: '사회', desc: '기후 변화에 따른 지도 제작', date: '2026-10-15', priority: 'low', time: 30 }
+      ]
+    };
 
-                emojiEl.innerText = selected.emoji;
-                menuEl.innerText = selected.name;
-                categoryEl.innerText = `# ${selected.category}`;
-                categoryEl.style.display = "inline-block";
+    let currentDate = new Date(2026, 9, 1); // Oct 2026
+    let isAdmin = false;
 
-                // 등장 효과 적용
-                emojiEl.classList.add("pop-in");
+    function init() {
+      loadClassData();
+    }
 
-                isRecommending = false;
-            }, 1200);
+    function toggleAdminMode() {
+      isAdmin = !isAdmin;
+      const btnText = document.getElementById('adminBtnText');
+      const addBtn = document.getElementById('addBtn');
+      if (isAdmin) {
+        btnText.innerText = "학생 모드로 전환";
+        addBtn.style.display = "flex";
+        alert("선생님/반장 관리자 모드로 전환되었습니다. 이제 수행평가를 등록할 수 있습니다.");
+      } else {
+        btnText.innerText = "반장/선생님 모드";
+        addBtn.style.display = "none";
+      }
+    }
+
+    function loadClassData() {
+      renderCalendar();
+      renderSidebar();
+    }
+
+    function moveMonth(delta) {
+      currentDate.setMonth(currentDate.getMonth() + delta);
+      renderCalendar();
+    }
+
+    function goToday() {
+      currentDate = new Date(2026, 9, 6);
+      renderCalendar();
+    }
+
+    function getSelectedClassTasks() {
+      const selectedClass = document.getElementById('classSelect').value;
+      return classDatabase[selectedClass] || [];
+    }
+
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
+      document.getElementById('monthTitle').innerText = `${year}년 ${month + 1}월`;
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
+      const prevLastDate = new Date(year, month, 0).getDate();
+
+      const calendarDays = document.getElementById('calendarDays');
+      calendarDays.innerHTML = '';
+
+      const tasks = getSelectedClassTasks();
+
+      // Prev Month Days
+      for (let i = firstDay - 1; i >= 0; i--) {
+        const dayCell = document.createElement('div');
+        dayCell.className = 'day-cell other-month';
+        dayCell.innerHTML = `<div class="day-number">${prevLastDate - i}</div>`;
+        calendarDays.appendChild(dayCell);
+      }
+
+      // Current Month Days
+      for (let day = 1; day <= lastDate; day++) {
+        const dayCell = document.createElement('div');
+        dayCell.className = 'day-cell';
+
+        // Check if today (2026-10-06)
+        if (year === 2026 && month === 9 && day === 6) {
+          dayCell.classList.add('today');
         }
-    </script>
+
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        
+        let html = `<div class="day-number">${day}</div>`;
+
+        // Render matching tasks
+        const dayTasks = tasks.filter(t => t.date === dateStr);
+        dayTasks.forEach(task => {
+          html += `
+            <div class="task-badge badge-${task.priority}">
+              <strong>[${task.subject}]</strong>
+              <span>${task.desc}</span>
+            </div>
+          `;
+        });
+
+        dayCell.innerHTML = html;
+        calendarDays.appendChild(dayCell);
+      }
+    }
+
+    function renderSidebar() {
+      const tasks = getSelectedClassTasks();
+      const sidebarList = document.getElementById('sidebarList');
+      sidebarList.innerHTML = '';
+
+      const today = new Date('2026-10-06');
+
+      tasks.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      tasks.forEach(task => {
+        const taskDate = new Date(task.date);
+        const diffDays = Math.ceil((taskDate - today) / (1000 * 60 * 60 * 24));
+
+        let dTagText = `D-${diffDays}`;
+        let isDday = false;
+
+        if (diffDays === 0) {
+          dTagText = 'D-DAY';
+          isDday = true;
+        } else if (diffDays < 0) {
+          dTagText = '마감됨';
+        }
+
+        const card = document.createElement('div');
+        card.className = `notice-card ${isDday ? 'd-day' : ''}`;
+        card.innerHTML = `
+          <div class="notice-top">
+            <span class="notice-subject">${task.subject}</span>
+            <span class="d-tag">${dTagText}</span>
+          </div>
+          <div class="notice-desc">${task.desc}</div>
+          <div class="notice-info">
+            <span>📅 ${task.date}</span>
+            <span>⏱️ 준비 ${task.time}분</span>
+          </div>
+        `;
+        sidebarList.appendChild(card);
+      });
+    }
+
+    function openAddModal() {
+      document.getElementById('addModal').style.display = 'flex';
+    }
+
+    function closeAddModal() {
+      document.getElementById('addModal').style.display = 'none';
+    }
+
+    function saveNotice() {
+      const subject = document.getElementById('inputSubject').value;
+      const desc = document.getElementById('inputDesc').value;
+      const date = document.getElementById('inputDate').value;
+      const priority = document.getElementById('inputPriority').value;
+      const time = document.getElementById('inputTime').value;
+
+      if (!subject || !date) {
+        alert('과목명과 날짜를 지정해주세요.');
+        return;
+      }
+
+      const selectedClass = document.getElementById('classSelect').value;
+      classDatabase[selectedClass].push({
+        id: Date.now(),
+        subject, desc, date, priority, time: Number(time)
+      });
+
+      closeAddModal();
+      loadClassData();
+      alert('우리 반 전체 학생 달력에 공지가 입력되었습니다!');
+    }
+
+    window.onload = init;
+  </script>
 </body>
 </html>
